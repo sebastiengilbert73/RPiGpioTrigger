@@ -5,6 +5,7 @@
 #include <log4cxx/logger.h>
 #include <log4cxx/xml/domconfigurator.h>
 #include <stdexcept> // runtime_error
+#include "RPiGpioTrigger.h"
 
 
 using namespace std;
@@ -113,6 +114,10 @@ int main(int argc, char **argv)
 			throw runtime_error(msg.str().c_str());
 		}
 		double delayToLogInactivity = atof(delayToLogInactivityElmPtr->GetText());
+		
+		// Create event trigger
+		RPiGpioTrigger eventTrigger(physicalPin, systemCallOnEvent, triggerState == "HIGH", sleepTimeInLoopInSeconds, minimumDelayBetweenTriggersInSeconds,
+			delayToLogInactivity, loggerPtr);
 	
 		cout << "Done!" << endl;
 	}
