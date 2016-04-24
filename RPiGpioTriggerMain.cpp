@@ -118,6 +118,14 @@ int main(int argc, char **argv)
 		// Create event trigger
 		RPiGpioTrigger eventTrigger(physicalPin, systemCallOnEvent, triggerState == "HIGH", sleepTimeInLoopInSeconds, minimumDelayBetweenTriggersInSeconds,
 			delayToLogInactivity, loggerPtr);
+			
+		eventTrigger.StartWatching();
+		
+		while(true)
+		{
+			usleep(1000000);
+		}
+		
 	
 		cout << "Done!" << endl;
 	}
