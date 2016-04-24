@@ -46,6 +46,73 @@ int main(int argc, char **argv)
 			LOG4CXX_ERROR(loggerPtr, msg.str());
 			throw runtime_error(msg.str().c_str());
 		}
+		
+		TiXmlElement* physicalPinElmPtr = rootElmPtr->FirstChildElement("PhysicalPin");
+		if (physicalPinElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'PhysicalPin' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		int physicalPin = atoi(physicalPinElmPtr->GetText());
+		
+		TiXmlElement* systemCallElmPtr = rootElmPtr->FirstChildElement("SystemCallOnEvent");
+		if (systemCallElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'SystemCallOnEvent' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		string systemCallOnEvent = systemCallElmPtr->GetText();
+		
+		TiXmlElement* triggerStateElmPtr = rootElmPtr->FirstChildElement("TriggerState");
+		if (triggerStateElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'TriggerState' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		string triggerState = triggerStateElmPtr->GetText();
+		if (triggerState != "HIGH" && triggerState != "LOW")
+		{
+			stringstream msg;
+			msg << "main(): 'TriggerState' element in file '" << configFilename << "' has unrecognized vale '" << triggerState << "'. Please use 'HIGH' or 'LOW'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		
+		TiXmlElement* sleepTimeInLoopElmPtr = rootElmPtr->FirstChildElement("SleepTimeInLoop");
+		if (sleepTimeInLoopElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'SleepTimeInLoop' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		double sleepTimeInLoopInSeconds = atof(sleepTimeInLoopElmPtr->GetText());
+		
+		TiXmlElement* minimumDelayBetweenTriggersInSecondsElmPtr = rootElmPtr->FirstChildElement("MinimumDelayBetweenTriggers");
+		if (minimumDelayBetweenTriggersInSecondsElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'MinimumDelayBetweenTriggers' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		double minimumDelayBetweenTriggersInSeconds = atof(minimumDelayBetweenTriggersInSecondsElmPtr->GetText());
+		
+		TiXmlElement* delayToLogInactivityElmPtr = rootElmPtr->FirstChildElement("DelayToLogInactivity");
+		if (delayToLogInactivityElmPtr == NULL)
+		{
+			stringstream msg;
+			msg << "main(): Could not find XML element 'DelayToLogInactivity' in file '" << configFilename << "'";
+			LOG4CXX_ERROR(loggerPtr, msg.str());
+			throw runtime_error(msg.str().c_str());
+		}
+		double delayToLogInactivity = atof(delayToLogInactivityElmPtr->GetText());
 	
 		cout << "Done!" << endl;
 	}

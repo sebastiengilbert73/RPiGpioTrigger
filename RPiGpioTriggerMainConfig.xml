@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <RPiGPioTriggerMain>
 	<PhysicalPin>15</PhysicalPin>
+	<SystemCallOnEvent>echo "Hello World!"</SystemCallOnEvent>
+	<TriggerState possibleValues="HIGH, LOW">HIGH</TriggerState>
+	<SleepTimeInLoop units="seconds">0.0001</SleepTimeInLoop>
+	<MinimumDelayBetweenTriggers units="seconds">5.0</MinimumDelayBetweenTriggers>
+	<DelayToLogInactivity units="seconds">10.0</DelayToLogInactivity>
 </RPiGPioTriggerMain>
