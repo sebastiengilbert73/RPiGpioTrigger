@@ -9,6 +9,8 @@
 #include <unistd.h> // usleep()
 #include <log4cxx/logger.h>
 #include <stdexcept> // runtime_error
+#include <wiringPi.h>
+#include <cstdlib>
 
 
 class RPiGpioTrigger
@@ -29,6 +31,7 @@ public:
 	double MinimumDelayBetweenTriggersInSeconds() { return _minimumDelayBetweenTriggersInSeconds; }
 	double DelayToLogInactivityInSeconds() { return _delayToLogInactivityInSeconds; }
 	log4cxx::LoggerPtr LoggerPtr() {  return _loggerPtr; }
+	bool WatchThreadMustRun() { return _watchThreadMustRun; }
 	
 private:
 	int _physicalPin;
@@ -39,6 +42,7 @@ private:
 	double _delayToLogInactivityInSeconds;
 	log4cxx::LoggerPtr _loggerPtr;
 	pthread_t _watchThread;
+	bool _watchThreadMustRun;
 
 };
 

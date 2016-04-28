@@ -16,6 +16,7 @@ void RPiGpioTrigger::Create()
 	_minimumDelayBetweenTriggersInSeconds = 0;
 	_delayToLogInactivityInSeconds = 0;
 	_watchThread = 0;
+	_watchThreadMustRun = false;
 
 }
 
@@ -42,7 +43,10 @@ void RPiGpioTrigger::Create(int physicalPin, std::string systemCallOnEvent, bool
 void RPiGpioTrigger::StartWatching()
 {
 	if (_watchThread == 0)
+	{
+		_watchThreadMustRun = true;
 		pthread_create(&_watchThread, NULL, GpioWatchThread, this);
+	}
 	else
 	{
 		stringstream msg;
@@ -54,15 +58,27 @@ void RPiGpioTrigger::StartWatching()
 
 void RPiGpioTrigger::StopWatching()
 {
+	_watchThreadMustRun = false;
 }
 
 
 void* GpioWatchThread(void* castRPiGpioTriggerPtr)
 {
 	RPiGpioTrigger* triggerPtr = (RPiGpioTrigger*) castRPiGpioTriggerPtr;
-	while(true)
+	LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Start");
+	wiringPiSetupPhys();
+	pinMode(triggerPtr->PhysicalPin(), INPUT);
+	pullUpDnControl(triggerPtr->PhysicalPin(), triggerPtr->TriggerOnHigh() ? PUD_DOWN : PUD_UP);
+	while(triggerPtr->WatchThreadMustRun())
 	{
+		if ( (triggerPtr->TriggerOnHigh() && digitalRead(triggerPtr->PhysicalPin()) == HIGH)
+			|| (!triggerPtr->TriggerOnHigh() && digitalRead(triggerPtr->PhysicalPin()) == LOW) )
+		{
+			LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Calling 'system(" << triggerPtr->SystemCallOnEvent().c_str() << ")'");
+			system(triggerPtr->SystemCallOnEvent().c_str());
+		}
 		usleep(1000000 * triggerPtr->SleepTimeInLoopInSeconds());
 	}
+	LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Stop");
 	return NULL;
 }
