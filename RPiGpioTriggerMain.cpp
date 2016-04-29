@@ -6,6 +6,7 @@
 #include <log4cxx/xml/domconfigurator.h>
 #include <stdexcept> // runtime_error
 #include "RPiGpioTrigger.h"
+#include <wiringPi.h>
 
 
 using namespace std;
@@ -18,6 +19,8 @@ LoggerPtr loggerPtr(Logger::getLogger("RPiGpioTriggerMain"));
 
 int main(int argc, char **argv)
 {
+	wiringPiSetup();
+	
 	try
 	{
 		if (argc < 2)
@@ -115,14 +118,17 @@ int main(int argc, char **argv)
 		}
 		double delayToLogInactivity = atof(delayToLogInactivityElmPtr->GetText());
 		
+		
+		
 		// Create event trigger
 		RPiGpioTrigger eventTrigger(physicalPin, systemCallOnEvent, triggerState == "HIGH", sleepTimeInLoopInSeconds, minimumDelayBetweenTriggersInSeconds,
 			delayToLogInactivity, loggerPtr);
 			
 		eventTrigger.StartWatching();
-		
+				
 		while(true)
 		{
+			
 			usleep(1000000);
 		}
 		

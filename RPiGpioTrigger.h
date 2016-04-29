@@ -46,6 +46,7 @@ private:
 
 };
 
+int WiringPinFromPhysicalPin(int physicalPin);
 void* GpioWatchThread(void* castRPiGpioTriggerPtr);
 
 #endif
