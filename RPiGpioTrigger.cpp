@@ -115,13 +115,28 @@ void* GpioWatchThread(void* castRPiGpioTriggerPtr)
 	int wiringPin = WiringPinFromPhysicalPin(triggerPtr->PhysicalPin());
 	pinMode(wiringPin, INPUT);
 	pullUpDnControl(wiringPin, triggerPtr->TriggerOnHigh() ? PUD_DOWN : PUD_UP);
+	
+	time_t lastEvent = time(NULL);
+	time_t lastLog = time(NULL);
 	while(triggerPtr->WatchThreadMustRun())
 	{
-		if ( (triggerPtr->TriggerOnHigh() && digitalRead(wiringPin) == HIGH)
-			|| (!triggerPtr->TriggerOnHigh() && digitalRead(wiringPin) == LOW) )
+		time_t currentTime = time(NULL);
+		double delaySinceLastEventInSeconds = difftime(currentTime, lastEvent);
+		if (delaySinceLastEventInSeconds >= triggerPtr->MinimumDelayBetweenTriggersInSeconds())
 		{
-			LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Calling 'system(" << triggerPtr->SystemCallOnEvent().c_str() << ")'");
-			system(triggerPtr->SystemCallOnEvent().c_str());
+			if ( (triggerPtr->TriggerOnHigh() && digitalRead(wiringPin) == HIGH)
+				|| (!triggerPtr->TriggerOnHigh() && digitalRead(wiringPin) == LOW) )
+			{
+				LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Calling 'system(" << triggerPtr->SystemCallOnEvent().c_str() << ")'");
+				system(triggerPtr->SystemCallOnEvent().c_str());
+				lastEvent = currentTime;
+				lastLog = currentTime;
+			}
+		}
+		if (difftime(currentTime, lastLog) >= triggerPtr->DelayToLogInactivityInSeconds())
+		{
+			LOG4CXX_INFO(triggerPtr->LoggerPtr(), "GpioWatchThread(): Still running!");
+			lastLog = currentTime;
 		}
 		usleep(1000000 * triggerPtr->SleepTimeInLoopInSeconds());
 	}

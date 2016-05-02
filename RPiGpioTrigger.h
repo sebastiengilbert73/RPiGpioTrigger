@@ -11,6 +11,7 @@
 #include <stdexcept> // runtime_error
 #include <wiringPi.h>
 #include <cstdlib>
+#include <time.h> // time_t
 
 
 class RPiGpioTrigger
