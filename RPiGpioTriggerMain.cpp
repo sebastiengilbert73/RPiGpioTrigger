@@ -23,13 +23,14 @@ int main(int argc, char **argv)
 	
 	try
 	{
-		if (argc < 2)
+		if (argc < 3)
 		{
-			cout << "Usage: RPiGpioTriggerMain [configFilename]" << endl;
+			cout << "Usage: RPiGpioTriggerMain [applicationConfigFilename] [logConfigFilename]" << endl;
 			return -1;
 		}
 	
-		DOMConfigurator::configure("RPiGpioTriggerMainLog4cxxConfig.xml");
+		string logConfigFilename = argv[2];
+		DOMConfigurator::configure(logConfigFilename);
 		LOG4CXX_DEBUG(loggerPtr, "main()");
 	
 		// Read config file

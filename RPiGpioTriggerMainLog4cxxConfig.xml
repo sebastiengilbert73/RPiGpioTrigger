@@ -13,7 +13,7 @@
 
   <!-- Rolling appender based in size -->
   <appender name="appxRollingAppenderSize" class="org.apache.log4j.RollingFileAppender">
-        <param name="file" value="log/RPiGpioTrigger.log"/>
+        <param name="file" value="/home/pi/projects/RPiGpioTrigger/log/RPiGpioTrigger.log"/>
         <param name="append" value="true"/>
         <param name="MaxFileSize" value="5MB"/>
         <param name="MaxBackupIndex" value="10"/>
